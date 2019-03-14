@@ -1,5 +1,5 @@
-const sandbox = require('sandbox.js');
-
+const jsonFile=require('./filmsBDD.txt')
+const fs = require('fs');
 
 const Express = require("express");
 const BodyParser = require("body-parser");
@@ -14,7 +14,11 @@ var app = Express();
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 
-var database, collection;
+var database, collect;
+var monfichier = fs.readFileSync("filmsBDD.txt").toString();
+
+
+
 
 app.listen(9292, () => {
     MongoClient.connect(CONNECTION_URL, { useNewUrlParser: true }, (error, client) => {
@@ -22,22 +26,23 @@ app.listen(9292, () => {
             throw error;
         }
         database = client.db(DATABASE_NAME);
-        collection = database.collection("movie");
+        collect = database.collection("movie");
         console.log("Connected to `" + DATABASE_NAME + "`!");
+		console.log(monfichier);
     });
 });
-
 
 
 //curl -H "Accept: application/json" http://localhost:9292/movies/populate
 
 app.get("/movies/populate", (request, response) => {
-    collection.insertOne(request.body, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result.result);
-    });
+	console.log(monfichier);
+    collect.insertMany(monfichier, function(err, res){
+		if (err) 
+		{return response.status(500).send(err);}
+		console.log("Number of documents inserted: " + res.insertedCount);
+		database.close();
+	});
 });
 
 //curl -H "Accept: application/json" http://localhost:9292/movies
