@@ -30,7 +30,6 @@ app.listen(9292, () => {
         collect = database.collection("movie");
 		collect2 = database.collection("AwesomeMovies");
         console.log("Connected to `" + DATABASE_NAME + "`!");
-		
     });
 });
 
@@ -52,19 +51,21 @@ app.get("/movies/populate", (request, response) => {
 		{return response.status(500).send(err);}
 		console.log("Number of documents inserted: " + res.insertedCount+" in AwesomeMovies collection.");
 	});
+	return 0;
 });
 
 
 //curl -H "Accept: application/json" http://localhost:9292/movies
 //Fetch a random must-watch movie
 app.get("/movies", (request, response) => {
-    collection.insertOne(request.body, (error, result) => {
+    console.log("Here is a random must-watch movie. its metascore is above 67");
+	collect.aggregate([ {$match : {metascore : {$gt:67} }},{ $sample: { size: 1 } } ] ).toArray((error, result) => {
         if(error) {
             return response.status(500).send(error);
-        }
-		console.log("Number of documents inserted: " + res.insertedCount);
-        response.send(result.result);
-    });
+		}
+	console.log(result);
+	stop();
+  });
 });
 
 //curl -H "Accept: application/json" http://localhost:9292/movies/tt0427309
@@ -76,10 +77,9 @@ app.get("/movies/:id", (request, response) => {
         if(error) {
             return response.status(500).send(error);
 		}
-		
 		console.log(result);
   });
-  return;
+  return 0;
 });
 
 //curl -H "Accept: application/json" http://localhost:9292/movies/search?limit=5&metascore=77
