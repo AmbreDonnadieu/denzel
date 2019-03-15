@@ -51,7 +51,6 @@ app.get("/movies/populate", (request, response) => {
 		{return response.status(500).send(err);}
 		console.log("Number of documents inserted: " + res.insertedCount+" in AwesomeMovies collection.");
 	});
-	return 0;
 });
 
 
@@ -64,7 +63,6 @@ app.get("/movies", (request, response) => {
             return response.status(500).send(error);
 		}
 	console.log(result);
-	stop();
   });
 });
 
@@ -79,7 +77,6 @@ app.get("/movies/:id", (request, response) => {
 		}
 		console.log(result);
   });
-  return 0;
 });
 
 //curl -H "Accept: application/json" http://localhost:9292/movies/search?limit=5&metascore=77
