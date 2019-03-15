@@ -42,14 +42,14 @@ app.get("/movies/populate", (request, response) => {
 	collect.insertMany(jsonData, function(err, res){
 		if (err) 
 		{return response.status(500).send(err);}
-		console.log("Number of documents inserted: " + res.insertedCount);
+		console.log("Number of documents inserted: " + res.insertedCount +" in movie collection.");
 	});
 	//one collection for awesome denzel movie (will be useful for the second request
 	jsonAwesome;
 	collect2.insertMany(jsonAwesome, function(err, res){
 		if (err) 
 		{return response.status(500).send(err);}
-		console.log("Number of documents inserted: " + res.insertedCount);
+		console.log("Number of documents inserted: " + res.insertedCount+" in AwesomeMovies collection.");
 	});
 });
 
