@@ -11,6 +11,7 @@ const CONNECTION_URL = "mongodb+srv://UserExample:miaou@example-uof3e.mongodb.ne
 const DATABASE_NAME = "movies";
 
 var app = Express();
+var url = require('url'); 
 
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
@@ -66,15 +67,19 @@ app.get("/movies", (request, response) => {
     });
 });
 
-//curl -H "Accept: application/json" http://localhost:9292/movies/tt0477080
-
+//curl -H "Accept: application/json" http://localhost:9292/movies/tt0427309
+//Fetch a specific movie from its id.
 app.get("/movies/:id", (request, response) => {
-    collection.insertOne(request.body, (error, result) => {
+	console.log("Here is the result for the function which give us all the parameter of a film from its id. ");
+	var query = { "id": request.params.id};
+    collect.findOne(query,(error, result) => {
         if(error) {
             return response.status(500).send(error);
-        }
-        response.send(result.result);
-    });
+		}
+		
+		console.log(result);
+  });
+  return;
 });
 
 //curl -H "Accept: application/json" http://localhost:9292/movies/search?limit=5&metascore=77
