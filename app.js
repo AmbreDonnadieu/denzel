@@ -1,4 +1,5 @@
-const jsonFile=require('./filmsBDD.txt')
+const jsonFile=require('./filmsBDD.json')
+const jsonFileA=require('./AwesomefilmsBDD.json')
 const fs = require('fs');
 
 const Express = require("express");
@@ -14,10 +15,9 @@ var app = Express();
 app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 
-var database, collect;
-var monfichier = fs.readFileSync("filmsBDD.json");
-var jsonData = JSON.parse(monfichier);
-
+var database, collect, collect2;
+var jsonData = JSON.parse(fs.readFileSync("filmsBDD.json"));
+var jsonAwesome = JSON.parse(fs.readFileSync("AwesomefilmsBDD.json"));
 
 
 app.listen(9292, () => {
@@ -27,6 +27,7 @@ app.listen(9292, () => {
         }
         database = client.db(DATABASE_NAME);
         collect = database.collection("movie");
+		collect2 = database.collection("AwesomeMovies");
         console.log("Connected to `" + DATABASE_NAME + "`!");
 		
     });
@@ -34,18 +35,27 @@ app.listen(9292, () => {
 
 
 //curl -H "Accept: application/json" http://localhost:9292/movies/populate
-
+//Populate the database with all the Denzel's movies from IMDb.
 app.get("/movies/populate", (request, response) => {
-    jsonData;
+    //One collection for all denzel movies 
+	jsonData;
 	collect.insertMany(jsonData, function(err, res){
+		if (err) 
+		{return response.status(500).send(err);}
+		console.log("Number of documents inserted: " + res.insertedCount);
+	});
+	//one collection for awesome denzel movie (will be useful for the second request
+	jsonAwesome;
+	collect2.insertMany(jsonAwesome, function(err, res){
 		if (err) 
 		{return response.status(500).send(err);}
 		console.log("Number of documents inserted: " + res.insertedCount);
 	});
 });
 
-//curl -H "Accept: application/json" http://localhost:9292/movies
 
+//curl -H "Accept: application/json" http://localhost:9292/movies
+//Fetch a random must-watch movie
 app.get("/movies", (request, response) => {
     collection.insertOne(request.body, (error, result) => {
         if(error) {
