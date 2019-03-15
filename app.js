@@ -7,7 +7,7 @@ const MongoClient = require("mongodb").MongoClient;
 const ObjectId = require("mongodb").ObjectID;
 
 const CONNECTION_URL = "mongodb+srv://UserExample:miaou@example-uof3e.mongodb.net/test?retryWrites=true";
-const DATABASE_NAME = "Movies";
+const DATABASE_NAME = "movies";
 
 var app = Express();
 
@@ -15,8 +15,8 @@ app.use(BodyParser.json());
 app.use(BodyParser.urlencoded({ extended: true }));
 
 var database, collect;
-var monfichier = fs.readFileSync("filmsBDD.txt").toString();
-
+var monfichier = fs.readFileSync("filmsBDD.json");
+var jsonData = JSON.parse(monfichier);
 
 
 
@@ -28,7 +28,7 @@ app.listen(9292, () => {
         database = client.db(DATABASE_NAME);
         collect = database.collection("movie");
         console.log("Connected to `" + DATABASE_NAME + "`!");
-		console.log(monfichier);
+		
     });
 });
 
@@ -36,12 +36,11 @@ app.listen(9292, () => {
 //curl -H "Accept: application/json" http://localhost:9292/movies/populate
 
 app.get("/movies/populate", (request, response) => {
-	console.log(monfichier);
-    collect.insertMany(monfichier, function(err, res){
+    jsonData;
+	collect.insertMany(jsonData, function(err, res){
 		if (err) 
 		{return response.status(500).send(err);}
 		console.log("Number of documents inserted: " + res.insertedCount);
-		database.close();
 	});
 });
 
@@ -52,6 +51,7 @@ app.get("/movies", (request, response) => {
         if(error) {
             return response.status(500).send(error);
         }
+		console.log("Number of documents inserted: " + res.insertedCount);
         response.send(result.result);
     });
 });

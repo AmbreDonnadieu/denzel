@@ -16,7 +16,7 @@ async function sandbox (actor) {
     console.log(`🥇 ${awesome.length} awesome movies found.`);
     console.log(JSON.stringify(awesome, null, 2));
 	
-	fs.writeFileSync("filmsBDD.txt", JSON.stringify(movies, null, 2));
+	fs.writeFileSync("filmsBDD.json", JSON.stringify(movies, null, 2));
     process.exit(0);
   } catch (e) {
     console.error(e);
