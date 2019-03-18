@@ -1,6 +1,7 @@
 const jsonFile=require('./filmsBDD.json')
 const jsonFileA=require('./AwesomefilmsBDD.json')
 const fs = require('fs');
+var rest = require('rest');
 
 const Express = require("express");
 const BodyParser = require("body-parser");
@@ -34,6 +35,12 @@ app.listen(9292, () => {
 });
 
 
+
+
+
+
+ 
+
 //curl -H "Accept: application/json" http://localhost:9292/movies/populate
 //Populate the database with all the Denzel's movies from IMDb.
 app.get("/movies/populate", (request, response) => {
@@ -51,7 +58,13 @@ app.get("/movies/populate", (request, response) => {
 		{return response.status(500).send(err);}
 		console.log("Number of documents inserted: " + res.insertedCount+" in AwesomeMovies collection.");
 	});
+	response.send("Tables created!");
 });
+
+
+
+
+
 
 
 //curl -H "Accept: application/json" http://localhost:9292/movies
@@ -62,9 +75,38 @@ app.get("/movies", (request, response) => {
         if(error) {
             return response.status(500).send(error);
 		}
+	//response.send(result);
 	console.log(result);
   });
 });
+
+
+
+
+
+// curl -H "Accept: application/json" "http://localhost:9292/movies/search?limit=5&metascore=77"
+
+app.get("/movies/search", (request, response) => {
+	var metascore = request.query.metascore;
+	var limit = request.query.limit;
+	
+    console.log("Here is "+limit+" movies which metascore is equal to "+metascore);
+	collect.aggregate([{$match: { metascore: { $gte: Number(metascore)} }},{ $sample: { size:  Number(limit) }},{$sort:{"metascore":-1}} ]).toArray((error, result) => {
+        if (error) {
+          return response.status(500).send(error);
+		}
+	//response.send(result);
+	console.log(result);
+  }); 
+});
+
+
+
+
+
+
+
+
 
 //curl -H "Accept: application/json" http://localhost:9292/movies/tt0427309
 //Fetch a specific movie from its id.
@@ -75,30 +117,37 @@ app.get("/movies/:id", (request, response) => {
         if(error) {
             return response.status(500).send(error);
 		}
+		response.send(result);
 		console.log(result);
   });
 });
 
-//curl -H "Accept: application/json" http://localhost:9292/movies/search?limit=5&metascore=77
 
-app.get("/movies/search", (request, response) => {
-    collection.insertOne(request.body, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result.result);
-    });
-});
 
-//curl -X POST -d '{"date": "2019-03-04", "review": "😍 🔥"}' -H "Content-Type: application/json" http://localhost:9292/movies/tt0328107
+
+
+
+
+// curl -X POST -d '{"date": "2019-03-04", "review": "Yeaylzekjjmaja"}' -H "Content-Type: application/json" http://localhost:9292/movies/tt0328107
 
 app.post("/movies/:id", (request, response) => {
-    collection.insertOne(request.body, (error, result) => {
-        if(error) {
-            return response.status(500).send(error);
-        }
-        response.send(result.result);
-    });
+    var testDate = request.body.date;
+	var testreview = request.body.review;
+	console.log(testDate +" "+testreview);
+	
+	collect.updateOne({ "id": request.params.id}, {$set: {"date": testDate, "review": testreview}}, (err, res) => {
+		if (err) 
+		{ return response.status(500).send(error);}
+		console.log("1 document updated");
+		response.send(res.result);	
+  });
+  
+  
+  collect.findOne({ "id": request.params.id},(error, result) => {
+        if(error) {return response.status(500).send(error);}
+		//response.send(result);
+		console.log(result);
+  });
 });
 
 
