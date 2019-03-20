@@ -1,4 +1,4 @@
-[
+let movies = [
   {
     "link": "https://www.imdb.com/title/tt3766354/?ref_=nm_flmg_act_1",
     "id": "tt3766354",
@@ -615,4 +615,5 @@
     "votes": 178,
     "year": 1977
   }
-]
+];
+ exports.movies = movies;

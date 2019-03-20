@@ -18,7 +18,8 @@ async function sandbox (actor) {
 	
 	fs.writeFileSync("filmsBDD.json", JSON.stringify(movies, null, 2));
 	fs.writeFileSync("AwesomefilmsBDD.json", JSON.stringify(awesome, null, 2));
-    process.exit(0);
+    fs.writeFileSync("data.js", "let movies = "+ JSON.stringify(movies, null, 2)+";\n exports.movies = movies;");
+	process.exit(0);
   } catch (e) {
     console.error(e);
     process.exit(1); 
